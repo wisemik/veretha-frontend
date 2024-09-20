@@ -60,13 +60,19 @@
             </div>
             <p v-if="errors.file" class="mt-1 text-sm text-red-500">{{ errors.file }}</p>
           </div>
-          
           <button
             type="submit"
             class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-md hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transform transition-all duration-300 hover:scale-105"
           >
             Make the Best CV for Your Job
           </button>
+          <button
+        @click="goToLogin"
+        type="button"
+        class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-md hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transform transition-all duration-300 hover:scale-105"
+      >
+        Login
+        </button>
         </form>
       </div>
     </div>
@@ -75,6 +81,14 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToLogin = () => {
+  router.push({ name: 'login' }) // Navigates to the Login page
+}
+
 
 const linkedinUrl = ref('')
 const fileName = ref('')
@@ -120,7 +134,7 @@ const handleSubmit = async () => {
       formData.append('file', file.value)
 
       // Send POST request to the extract-text endpoint for the file using fetch
-      const fileResponse = await fetch('https://llamarally.xyz/extract-text', {
+      const fileResponse = await fetch('http://0.0.0.0:8000/extract-text', {
         method: 'POST',
         body: formData,
         headers: {
@@ -136,13 +150,12 @@ const handleSubmit = async () => {
       jobDescription.value = fileData.extracted_text
       console.log('Extracted Text from PDF:', jobDescription.value)
 
-      // Send POST request to extract-linkedin endpoint with LinkedIn URL using fetch
-      const linkedinResponse = await fetch('https://llamarally.xyz/extract-linkedin', {
+      const linkedinResponse = await fetch('http://0.0.0.0:8000/extract-linkedin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url: linkedinUrl.value })
+        body: JSON.stringify({ linkedin_url: linkedinUrl.value })
       })
 
       if (!linkedinResponse.ok) {
@@ -153,6 +166,31 @@ const handleSubmit = async () => {
       linkedinData.value = linkedinDataResponse
       console.log('Extracted Data from LinkedIn:', linkedinData.value)
 
+      const scoreResponse = await fetch('http://localhost:8000/score-resume', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          resume_text: JSON.stringify(linkedinData.value),  // Ensure this is a string
+          job_description: JSON.stringify(jobDescription.value)  // Ensure this is a string
+        })
+      });
+
+      if (!scoreResponse.ok) {
+        throw new Error(`HTTP error! status: ${scoreResponse.status}`);
+      }
+
+      const scoreData = await scoreResponse.json();
+      console.log('Score Data:', scoreData);  
+      const { score_result, description, improvements } = scoreData;
+      console.log("Score:", score_result);
+      console.log("Description:", description);
+      console.log("Details:", improvements);
+
+      goToScores(score_result, description, improvements);
+
     } catch (error) {
       console.error('Error during submission:', error)
       if (error.message.includes('LinkedIn')) {
@@ -162,6 +200,17 @@ const handleSubmit = async () => {
       }
     }
   }
+}
+
+const goToScores = (score, description, improvements) => {
+  router.push({
+    name: 'scores',
+    query: {
+      score: score,
+      description: description,
+      improvements: improvements
+    }
+  })
 }
 
 </script>
