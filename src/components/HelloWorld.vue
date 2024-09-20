@@ -78,23 +78,28 @@ import { ref, reactive } from 'vue'
 
 const linkedinUrl = ref('')
 const fileName = ref('')
+const jobDescription = ref('') // To store the extracted text from the file
+const linkedinData = ref('') // To store the extracted data from LinkedIn
+const file = ref(null) // To store the file object
 const errors = reactive({
   linkedin: '',
   file: ''
 })
 
 const handleFileChange = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    fileName.value = file.name
+  const selectedFile = event.target.files[0]
+  if (selectedFile) {
+    fileName.value = selectedFile.name
+    file.value = selectedFile // Assign the file object to ref
     errors.file = ''
   } else {
     fileName.value = ''
+    file.value = null
     errors.file = 'Please select a PDF file'
   }
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   errors.linkedin = ''
   errors.file = ''
 
@@ -104,15 +109,63 @@ const handleSubmit = () => {
     errors.linkedin = 'Please enter a valid LinkedIn URL'
   }
 
-  if (!fileName.value) {
+  if (!fileName.value || !file.value) {
     errors.file = 'Please select a PDF file'
   }
 
   if (!errors.linkedin && !errors.file) {
-    console.log('Form submitted:', { linkedinUrl: linkedinUrl.value, fileName: fileName.value })
+    try {
+      // Create a FormData object to send the file in a POST request
+      const formData = new FormData()
+      formData.append('file', file.value)
+
+      // Send POST request to the extract-text endpoint for the file using fetch
+      const fileResponse = await fetch('https://llamarally.xyz/extract-text', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json',
+        },
+      })
+
+      if (!fileResponse.ok) {
+        throw new Error('Failed to extract text from the file.')
+      }
+
+      const fileData = await fileResponse.json()
+      jobDescription.value = fileData.extracted_text
+      console.log('Extracted Text from PDF:', jobDescription.value)
+
+      // Send POST request to extract-linkedin endpoint with LinkedIn URL using fetch
+      const linkedinResponse = await fetch('https://llamarally.xyz/extract-linkedin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: linkedinUrl.value })
+      })
+
+      if (!linkedinResponse.ok) {
+        throw new Error('Failed to extract data from LinkedIn URL.')
+      }
+
+      const linkedinDataResponse = await linkedinResponse.json()
+      linkedinData.value = linkedinDataResponse
+      console.log('Extracted Data from LinkedIn:', linkedinData.value)
+
+    } catch (error) {
+      console.error('Error during submission:', error)
+      if (error.message.includes('LinkedIn')) {
+        errors.linkedin = 'Failed to extract data from LinkedIn URL.'
+      } else {
+        errors.file = 'Failed to extract text from the file. Please try again.'
+      }
+    }
   }
 }
+
 </script>
+
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap');
