@@ -211,6 +211,8 @@
         })
       } else {
         console.error('Error:', data.detail || 'An error occurred')
+        alert('An error occurred: ' + data.detail || 'An error occurred')
+
       }
     } catch (error) {
       console.error('An error occurred:', error.message)
