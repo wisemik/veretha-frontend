@@ -94,13 +94,22 @@
             {{ profile.wallet_id }}
           </p>
         </div>
-        
+
         <div v-if="!isFriendProfile">
           <label for="wallet_address" class="block text-sm font-medium text-gray-700 mb-1">
             Wallet Address
           </label>
           <p id="wallet_address" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
             {{ profile.wallet_address }}
+          </p>
+        </div>
+        
+        <div v-if="!isFriendProfile">
+          <label for="wallet_balance" class="block text-sm font-medium text-gray-700 mb-1">
+            Wallet Balance
+          </label>
+          <p id="wallet_balance" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
+            {{ walletBalance }}
           </p>
         </div>
         
@@ -221,6 +230,26 @@
         </button>
       </div>
 
+      <div class="mt-8 text-center" v-if="profile.verified && isFriendProfile">    
+        <button
+          @click="handleSignFriend"
+          class="w-full bg-blue-500 text-white font-bold py-3 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transform transition-all duration-300 hover:scale-105"
+        >
+          Sign that a Friend Really have this skills
+        </button>
+      </div>
+
+      <!-- Modal -->
+      <div v-if="isModalVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+          <h2 class="text-xl font-bold mb-4">Verification Bounty</h2>
+          <p class="mb-4">Tnaks for verification! If the employee gets the job with your verification, you will receive a bounty of $10.</p>
+          <button @click="isModalVisible = false" class="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transform transition-all duration-300 hover:scale-105">
+            Close
+          </button>
+        </div>
+      </div>
+
       <div class="mt-8 text-center" v-if="isFriendProfile">
         <button
           @click="handleBackToMyProfile"
@@ -229,6 +258,7 @@
           Back to My Profile
         </button>
       </div>
+      
     </div>
   </div>
 </template>
@@ -236,6 +266,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import AttestationManager from './AttestationManager.js';
 
 const isFriendProfile = ref(false)
 
@@ -447,6 +478,54 @@ const handleVerifyFriend = () => {
 const handleBackToMyProfile = () => {
   isFriendProfile.value = false;
 }
+
+const bobAddress = ref('');
+
+const createSchema = async () => {
+  await AttestationManager.createSchema();
+};
+
+const attest = async () => {
+  await AttestationManager.attest(bobAddress.value);
+};
+
+const checkAttestations = async () => {
+  await AttestationManager.checkAttestations(bobAddress.value);
+};
+
+const showParsedData = async () => {
+  await AttestationManager.showParsedData(bobAddress.value);
+};
+
+const walletBalance = ref('Loading...');
+
+const fetchWalletBalance = async (wallet_id) => {
+  try {
+    const response = await fetch(`http://localhost:8000/get-balance/${wallet_id}`);
+    if (response.ok) {
+      console.log('Wallet balance fetched successfully', response);
+      const data = await response.json();
+      walletBalance.value = data.balance;
+    } else {
+      console.error('Failed to fetch wallet balance');
+      walletBalance.value = 'Error fetching balance';
+    }
+  } catch (error) {
+    console.error('Error fetching wallet balance:', error);
+    walletBalance.value = 'Error fetching balance';
+  }
+};
+
+onMounted(() => {
+  // ... existing code ...
+  fetchWalletBalance(profile.value.wallet_id);
+});
+
+const isModalVisible = ref(false);
+
+const handleSignFriend = () => {
+  isModalVisible.value = true;
+};
 </script>
 
 <style scoped>

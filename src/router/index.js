@@ -3,12 +3,18 @@ import HomeView from '@/views/HomeView.vue'
 import ScoresView from '@/views/ScoresView.vue'
 import AuthView from '@/views/AuthView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import EmployerView from '@/views/EmployerView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView
+  },
+  {
+    path: '/employer',
+    name: 'employer',
+    component: EmployerView
   },
   {
     path: '/auth',
