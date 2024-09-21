@@ -36,7 +36,7 @@
               Register Now
             </button>
             <!-- Add the w3m-button component here -->
-            <w3m-button class="mt-4 w-full" />
+            <!-- <w3m-button class="mt-4 w-full" /> -->
           </div>
           
           <button
@@ -45,13 +45,7 @@
           >
             Back to Home
           </button>
-          
-          <!-- Add the login button here -->
-          <div class="mt-4">
-            <button @click="login" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300">
-              Log in
-            </button>
-          </div>
+                  
         </div>
       </div>
     </div>
@@ -60,40 +54,7 @@
   <script setup>
   import { defineProps } from 'vue'
   import { useRouter } from 'vue-router'
-  import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
-  import { useAuth0 } from '@auth0/auth0-vue' // Import Auth0
-
-  import { mainnet, arbitrum } from 'viem/chains'
-  import { reconnect } from '@wagmi/core'
-
-  // 1. Your Reown Cloud project ID
-  const projectId = '654cd1175ba09f9925bbe1e9889fccce'
-
-  // 2. Create a metadata object
-  const metadata = {
-    name: 'veretha',
-    description: 'AppKit Example',
-    url: 'https://reown.com/appkit', // origin must match your domain & subdomain
-    icons: ['https://assets.reown.com/reown-profile-pic.png']
-  }
   
-  // 3. Create wagmiConfig
-  const chains = [mainnet, arbitrum]
-  const config = defaultWagmiConfig({
-    chains,
-    projectId,
-    metadata
-  })
-
-  reconnect(config)
-
-  // 4. Create modal
-  const modal = createWeb3Modal({
-    wagmiConfig: config,
-    projectId,
-    enableAnalytics: true, // Optional - defaults to your Cloud configuration
-    enableOnramp: true // Optional - false as default
-  })
   
   const props = defineProps({
     score: {
@@ -113,21 +74,15 @@
   const router = useRouter()
   
   const handleRegister = () => {
-    // Show the modal
-    modal.open()
+    router.push('/auth')
+
   }
   
   const goBack = () => {
     router.push('/')
   }
 
-  // Auth0 login function
-  const { loginWithRedirect } = useAuth0()
-  const login = () => {
-    loginWithRedirect({
-      redirect_uri: `${window.location.origin}/login`
-    })
-  }
+ 
   </script>
   
   <style>

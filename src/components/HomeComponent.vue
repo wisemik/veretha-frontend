@@ -97,11 +97,7 @@ const errors = reactive({
   file: ''
 })
 
-// Auth0 login function
-const { loginWithRedirect } = useAuth0()
-  const login = () => {
-    loginWithRedirect()
-  }
+
 
 const handleFileChange = (event) => {
   const selectedFile = event.target.files[0]
@@ -214,6 +210,10 @@ const goToScores = (score, description, improvements) => {
       improvements: improvements
     }
   })
+}
+
+const login = () => {
+  router.push('/auth')
 }
 
 </script>
