@@ -1,12 +1,12 @@
 <template>
     <div class="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center p-6 font-roboto-mono">
-      <div class="w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden transform transition-all hover:scale-105 duration-300">
+      <div class="w-full max-w-xl bg-white rounded-xl shadow-2xl overflow-hidden transform transition-all hover:scale-105 duration-300">
         <div class="p-8">
           <h1 class="text-3xl font-bold text-center mb-6">Your CV Score</h1>
           
           <div class="flex items-center justify-center mb-6">
             <div class="w-32 h-32 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-              <span class="text-3xl font-bold text-white">{{ score }}/100</span>
+              <span class="text-2xl font-bold text-white">{{ score }}/100</span>
             </div>
           </div>
           
@@ -18,8 +18,7 @@
               <!-- <li v-for="(improvement, index) in improvements" :key="index" class="text-gray-700">
                 {{ improvement }}
               </li> -->
-              <p class="text-lg text-gray-700 mb-6 text-left">{{ improvements }}</p>
-
+              <div v-html="improvements" class="text-gray-700 text-left improvements-list"></div>
             </ul>
           </div>
           
@@ -85,6 +84,20 @@
   <style>
   @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap');
   
+  .improvements-list ul {
+    list-style-type: disc;
+    padding-left: 1.5rem; /* Adjust as needed */
+}
+
+
+
+.improvements-list li::after {
+    content: '•';
+    position: absolute;
+    right: -1.5rem; /* Adjust as needed */
+    color: black; /* Adjust color as needed */
+}
+
   .font-roboto-mono {
     font-family: 'Roboto Mono', monospace;
   }
