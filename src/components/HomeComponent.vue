@@ -67,7 +67,7 @@
             Make the Best CV for Your Job
           </button>
           <button
-        @click="goToLogin"
+        @click="login"
         type="button"
         class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-md hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transform transition-all duration-300 hover:scale-105"
       >
@@ -82,12 +82,9 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuth0 } from '@auth0/auth0-vue' // Import Auth0
 
 const router = useRouter()
-
-const goToLogin = () => {
-  router.push({ name: 'login' }) // Navigates to the Login page
-}
 
 
 const linkedinUrl = ref('')
@@ -99,6 +96,12 @@ const errors = reactive({
   linkedin: '',
   file: ''
 })
+
+// Auth0 login function
+const { loginWithRedirect } = useAuth0()
+  const login = () => {
+    loginWithRedirect()
+  }
 
 const handleFileChange = (event) => {
   const selectedFile = event.target.files[0]
