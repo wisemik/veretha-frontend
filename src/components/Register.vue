@@ -2,7 +2,7 @@
     <div class="w-full max-w-md bg-white rounded-xl shadow-2xl overflow-hidden transform transition-all hover:scale-105 duration-300">
       <div class="p-8">
         <h1 class="text-3xl font-bold text-center mb-6">Register for Veretha</h1>
-        
+
         <form @submit.prevent="handleSubmit" class="space-y-4">
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
@@ -150,6 +150,15 @@
   <script setup>
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
+  import { defineProps } from 'vue'
+  import { onMounted } from 'vue'
+
+  const props = defineProps({
+    linkedinData: {
+      type: String,
+      required: false
+    }
+  })
 
   const form = ref({
     email: '',
@@ -176,9 +185,30 @@
       const data = await response.json()
 
       if (response.status === 200) {
-        console.log('User ID:', data.user_id)
+        console.log('data:', data)
+        console.log('User ID:', data.id)
+        console.log('Email:', data.email)
+        console.log('Full Name:', data.full_name)
+        console.log('Occupation:', data.occupation)
+        console.log('Company:', data.company)
+        console.log('Skills:', data.skills)
+        console.log('Country:', data.country)
+        console.log('City:', data.city)
+        console.log('LinkedIn URL:', data.linkedin_url)
         // Redirect to welcome or login page
-        router.push('/profile')
+        router.push({
+          path: '/profile',
+          query: {
+            email: data.email,
+            full_name: data.full_name,
+            occupation: data.occupation,
+            company: data.company,
+            skills: data.skills,
+            country: data.country,
+            city: data.city,
+            linkedin_url: data.linkedin_url
+          }
+        })
       } else {
         console.error('Error:', data.detail || 'An error occurred')
       }
@@ -192,6 +222,23 @@
   const goBack = () => {
     router.push('/')
   }
+
+  onMounted(() => {
+    if (props.linkedinData) {
+      try {
+        const parsedData = JSON.parse(props.linkedinData)
+        const linkedinData = parsedData.linkedin_data
+
+        form.value.full_name = linkedinData.full_name || ''
+        form.value.occupation = linkedinData.occupation || ''
+        form.value.country = linkedinData.country_full_name || ''
+        form.value.city = linkedinData.city || ''
+        form.value.linkedin_url = `https://www.linkedin.com/in/${linkedinData.public_identifier}` || ''
+      } catch (error) {
+        console.error('Failed to parse LinkedIn data:', error)
+      }
+    }
+  })
 
   defineEmits(['switch-to-login'])
   </script>

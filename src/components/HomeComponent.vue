@@ -188,7 +188,7 @@ const handleSubmit = async () => {
       console.log("Description:", description);
       console.log("Details:", improvements);
 
-      goToScores(score_result, description, improvements);
+      goToScores(score_result, description, improvements, JSON.stringify(linkedinData.value)); // Pass linkedinData.value
 
     } catch (error) {
       console.error('Error during submission:', error)
@@ -201,13 +201,15 @@ const handleSubmit = async () => {
   }
 }
 
-const goToScores = (score, description, improvements) => {
+const goToScores = (score, description, improvements, linkedinData) => { // Add linkedinData parameter
+  console.log('Navigating to Scores page with data...', linkedinData)
   router.push({
     name: 'scores',
     query: {
       score: score,
       description: description,
-      improvements: improvements
+      improvements: improvements,
+      linkedinData: linkedinData 
     }
   })
 }

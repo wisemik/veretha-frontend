@@ -68,14 +68,25 @@
     improvements: {
       type: String,
       required: true
+    },
+    linkedinData: {
+      type: String,
+      required: true
     }
   })
   
   const router = useRouter()
   
   const handleRegister = () => {
-    router.push('/auth')
+    console.log('Linkedin Data...', props.linkedin_data)
 
+    router.push({
+      name: 'auth',
+      query: {
+        action: 'register', // Passing 'register' as the action
+        linkedinData: props.linkedinData
+      }
+    })
   }
   
   const goBack = () => {

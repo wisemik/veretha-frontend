@@ -72,11 +72,52 @@
     password: ''
   })
   
-  const handleSubmit = () => {
-    // Here you would typically send the login data to your backend
-    console.log('Login form submitted:', form.value)
-    // After successful login, you might want to redirect to a dashboard or home page
-    // router.push('/dashboard')
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(form.value)
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const userData = await response.json();
+
+      console.log('Login form submitted:', userData);
+
+      // Process the additional fields as needed
+      console.log('User ID:', userData.id);
+      console.log('Email:', userData.email);
+      console.log('Full Name:', userData.full_name);
+      console.log('Occupation:', userData.occupation);
+      console.log('Company:', userData.company);
+      console.log('Skills:', userData.skills);
+      console.log('Country:', userData.country);
+      console.log('City:', userData.city);
+      console.log('LinkedIn URL:', userData.linkedin_url);
+
+      // After successful login, you might want to redirect to a dashboard or home page
+      router.push({
+          path: '/profile',
+          query: {
+            email: userData.email,
+            full_name: userData.full_name,
+            occupation: userData.occupation,
+            company: userData.company,
+            skills: userData.skills,
+            country: userData.country,
+            city: userData.city,
+            linkedin_url: userData.linkedin_url
+          }
+        });
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
   }
 
   const router = useRouter()

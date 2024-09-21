@@ -11,16 +11,7 @@
             <p id="email" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
               {{ profile.email }}
             </p>
-          </div>
-          
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-              Password*
-            </label>
-            <p id="password" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
-              ••••••••
-            </p>
-          </div>
+          </div>        
           
           <div>
             <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">
@@ -103,19 +94,57 @@
   
   <script setup>
   import { ref } from 'vue'
-  
-  const profile = ref({
-    email: 'user@example.com',
-    password: '********',
-    full_name: 'John Doe',
-    occupation: 'Software Developer',
-    company: 'Tech Corp',
-    skills: 'JavaScript, Vue.js, Python',
-    country: 'United States',
-    city: 'San Francisco',
-    linkedin_url: 'https://www.linkedin.com/in/johndoe'
+  import { useRoute } from 'vue-router'
+
+  // Define props
+  const props = defineProps({
+    email: {
+      type: String,
+      required: true
+    },
+    full_name: {
+      type: String,
+      required: true
+    },
+    occupation: {
+      type: String,
+      required: false
+    },
+    company: {
+      type: String,
+      required: false
+    },
+    skills: {
+      type: String,
+      required: false
+    },
+    country: {
+      type: String,
+      required: false
+    },
+    city: {
+      type: String,
+      required: false
+    },
+    linkedin_url: {
+      type: String,
+      required: false
+    }
   })
-  
+
+  const route = useRoute()
+
+  const profile = ref({
+    email: props.email || route.query.email || 'user@example.com',
+    full_name: props.full_name || route.query.full_name || 'John Doe',
+    occupation: props.occupation || route.query.occupation || 'Software Developer',
+    company: props.company || route.query.company || 'Tech Corp',
+    skills: props.skills || route.query.skills || 'JavaScript, Vue.js, Python',
+    country: props.country || route.query.country || 'United States',
+    city: props.city || route.query.city || 'San Francisco',
+    linkedin_url: props.linkedin_url || route.query.linkedin_url || 'https://www.linkedin.com/in/johndoe'
+  })
+
   const handleVerify = () => {
     console.log('Verification requested')
     // Here you would typically initiate the verification process

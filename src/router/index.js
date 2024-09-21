@@ -13,12 +13,25 @@ const routes = [
   {
     path: '/auth',
     name: 'auth',
-    component: AuthView
+    component: AuthView,
+    props: route => ({
+      linkedinData: route.query.linkedinData 
+    })
   },
   {
     path: '/profile',
     name: 'profile',
-    component: ProfileView
+    component: ProfileView,
+    props: route => ({
+      email: route.query.email,
+      full_name: route.query.full_name,
+      occupation: route.query.occupation,
+      company: route.query.company,
+      skills: route.query.skills,
+      country: route.query.country,
+      city: route.query.city,
+      linkedin_url: route.query.linkedin_url
+    })
   },
   {
     path: '/scores',
@@ -27,7 +40,8 @@ const routes = [
     props: route => ({
       score: route.query.score,
       description: route.query.description,
-      improvements: route.query.improvements
+      improvements: route.query.improvements,
+      linkedinData: route.query.linkedinData 
     })
   }
 ]
