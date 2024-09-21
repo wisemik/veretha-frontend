@@ -206,7 +206,7 @@
         </button>
       </div>
       
-      <div class="mt-8 text-center" v-if="profile.verified">
+      <div class="mt-8 text-center" v-if="profile.verified && !isFriendProfile">
         <input
           v-model="friendEmail"
           type="email"
@@ -236,6 +236,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+
+const isFriendProfile = ref(false)
 
 const onSuccess = async (result) => {
   // Handle success
@@ -355,16 +357,20 @@ const props = defineProps({
   wallet_address: {
     type: String,
     required: false
-  },
-  isFriendProfile: {
-    type: Boolean,
-    required: false,
-    default: false
   }
 })
 
 const route = useRoute()
 
+function parseBoolean(value) {
+  if (value === 'true' || value === true) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+    
 const profile = ref({
   email: props.email || route.query.email || 'user@example.com',
   full_name: props.full_name || route.query.full_name || 'John Doe',
@@ -374,7 +380,7 @@ const profile = ref({
   country: props.country || route.query.country || 'United States',
   city: props.city || route.query.city || 'San Francisco',
   linkedin_url: props.linkedin_url || route.query.linkedin_url || 'https://www.linkedin.com/in/johndoe',
-  verified: props.verified,
+  verified: parseBoolean(route.query.verified),
   wallet_id: props.wallet_id || route.query.wallet_id || '0x',
   wallet_address: props.wallet_address || route.query.wallet_address || '0x',
 })
