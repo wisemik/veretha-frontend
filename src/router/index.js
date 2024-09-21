@@ -30,7 +30,10 @@ const routes = [
       skills: route.query.skills,
       country: route.query.country,
       city: route.query.city,
-      linkedin_url: route.query.linkedin_url
+      linkedin_url: route.query.linkedin_url,
+      verified: route.query.verified,
+      wallet_id: route.query.wallet_id,
+      walled_address: route.query.walled_address
     })
   },
   {

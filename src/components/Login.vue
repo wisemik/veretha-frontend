@@ -100,6 +100,8 @@
       console.log('Country:', userData.country);
       console.log('City:', userData.city);
       console.log('LinkedIn URL:', userData.linkedin_url);
+      console.log('Verified:', userData.verified);
+
 
       // After successful login, you might want to redirect to a dashboard or home page
       router.push({
@@ -112,7 +114,10 @@
             skills: userData.skills,
             country: userData.country,
             city: userData.city,
-            linkedin_url: userData.linkedin_url
+            linkedin_url: userData.linkedin_url,
+            verified: userData.verified,
+            wallet_id: userData.wallet_id,
+            wallet_address: userData.wallet_address
           }
         });
     } catch (error) {

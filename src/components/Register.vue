@@ -206,7 +206,10 @@
             skills: data.skills,
             country: data.country,
             city: data.city,
-            linkedin_url: data.linkedin_url
+            linkedin_url: data.linkedin_url,
+            verified: data.verified,
+            wallet_id: data.wallet_id || '', // Ensure wallet_id exists
+            wallet_address: data.wallet_address || '' // Ensure wallet_address exists
           }
         })
       } else {

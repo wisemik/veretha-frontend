@@ -81,24 +81,24 @@
               Verification Status
             </label>
             <p id="verification_status" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
-              {{ profile.verified }}
+              {{ profile.verification_status }}
             </p>
           </div>
         
-          <div>
+          <!-- <div>
             <label for="wallet_id" class="block text-sm font-medium text-gray-700 mb-1">
               Wallet ID
             </label>
             <p id="wallet_id" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
-              {{ profile.wallet_id }}
+              {{ profile.wallet_id  }}
             </p>
-          </div>
+          </div> -->
         
           <div>
             <label for="wallet_address" class="block text-sm font-medium text-gray-700 mb-1">
               Wallet Address
             </label>
-            <p id="wallet_address" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50">
+            <p id="wallet_address" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm">
               {{ profile.wallet_address }}
             </p>
           </div>
@@ -106,7 +106,7 @@
         
         <div class="mt-8 text-center">
           <p class="text-lg font-semibold text-gray-700 mb-4">
-            Verify you are a real human to start earning bounties and boost your CV
+            Verify this profile CV carefully
           </p>
           <button
             @click="handleVerify"
@@ -115,87 +115,15 @@
             Verify
           </button>
         </div>
+
       </div>
     </div>
   </template>
   
   <script setup>
   import { ref, onMounted } from 'vue'
-  import { useRoute } from 'vue-router'
   // import IDKit from '@worldcoin/idkit-standalone' // Removed this line
-  
-  const onSuccess = async (result) => {
-    // Handle success
-    console.log('Verification successful', result)
-    console.log('Preparing to send verification data to the server...');
-    
-    const payload = {
-      nullifier_hash: result.nullifier_hash,
-      merkle_root: result.merkle_root,
-      proof: result.proof,
-      verification_level: result.verification_level,
-      action: 'verify-veretha-3', // Adjust this if needed
-    };
-    console.log('Payload:', payload);
-
-    try {
-      console.log('Sending POST request to http://127.0.0.1:8000/verify');
-      const response = await fetch('http://127.0.0.1:8000/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      console.log('Response status:', response.status);
-      if (response.ok) {
-        console.log('Verified!!!!');
-        // Add POST request to set verification status
-        const setVerifiedPayload = {
-          email: profile.value.email,
-          verification_status: 'orb'
-        };
-        try {
-          const setVerifiedResponse = await fetch('http://localhost:8000/set-verified', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(setVerifiedPayload)
-          });
-          if (setVerifiedResponse.ok) {
-            console.log('Verification status set successfully');
-          } else {
-            console.log('Failed to set verification status');
-          }
-        } catch (error) {
-          console.error('Error setting verification status:', error);
-        }
-      } else {
-        console.log('Not verified');
-        const errorData = await response.json();
-        console.log('Error data:', errorData);
-        alert('Error: ' + JSON.stringify(errorData, null, 2)); // Show alert with detailed error data
-      }
-    } catch (error) {
-      console.error('Error during verification:', error);
-    }
-  }
-  
-  onMounted(() => {
-    // Initialize IDKit using window.IDKit
-    if (window.IDKit) {
-      window.IDKit.init({
-        app_id: 'app_staging_61506d1aaf38bb0667bd9a6d051220d1',
-        action: 'verify-veretha-3',
-        onSuccess: onSuccess,
-      })
-    } else {
-      console.error('IDKit is not loaded')
-    }
-    
-  })
+     
   
   // Define props
   const props = defineProps({
@@ -231,10 +159,6 @@
       type: String,
       required: false
     },
-    verified: {
-      type: String,
-      required: false
-    },
     wallet_id: {
       type: String,
       required: false
@@ -242,10 +166,13 @@
     wallet_address: {
       type: String,
       required: false
+    },
+    verification_status: {
+      type: String,
+      required: false
     }
   })
   
-  const route = useRoute()
   
   const profile = ref({
     email: props.email || route.query.email || 'user@example.com',
@@ -256,20 +183,12 @@
     country: props.country || route.query.country || 'United States',
     city: props.city || route.query.city || 'San Francisco',
     linkedin_url: props.linkedin_url || route.query.linkedin_url || 'https://www.linkedin.com/in/johndoe',
-    verified: props.verified || route.query.verified || 'not',
-    wallet_id: props.wallet_id || route.query.wallet_id || '0x',
-    wallet_address: props.wallet_address || route.query.wallet_address || '0x'
+    wallet_id: props.wallet_id || route.query.wallet_id || '1234567890',
+    wallet_address: props.wallet_address || route.query.wallet_address || '0x1234567890abcdef',
+    verification_status: p
   })
   
-  const handleVerify = () => {
-    console.log('Verification requested')
-    // Open the IDKit widget using window.IDKit
-    if (window.IDKit) {
-      window.IDKit.open()
-    } else {
-      console.error('IDKit is not loaded')
-    }
-  }
+  
   </script>
   
   <style scoped>
