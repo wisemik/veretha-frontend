@@ -189,6 +189,7 @@
         particleCount,
         origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
         colors: ['#ff0000', '#00ff00', '#0000ff'],
+        colors: ['#ff0000', '#00ff00', '#0000ff'],W
         emojis: ['🎉', '🥳', '🎊', '👏', '🙌'],
         scalar: randomInRange(0.4, 1)
       }))

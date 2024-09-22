@@ -1,5 +1,7 @@
 # veretha-frontend
 
+backend: https://github.com/wisemik/veretha-backend
+
 ## Project setup
 ```
 pnpm install
